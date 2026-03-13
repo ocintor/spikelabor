@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>LEGO SPIKE – Erfinderlabor</title>
+
+<style>
+    /* --------- CSS VARIABLEN FÜR LIGHT/DARK THEME --------- */
+    :root {
+        --bg: #f4f4f4;
+        --bg-pattern: radial-gradient(circle at 8px 8px, rgba(0,0,0,0.05) 3px, transparent 4px);
+        --text: #222;
+        --header-bg: #0057A6;
+        --header-text: #ffffff;
+        --header-border: #FFD500;
+        --card-bg: #ffffff;
+        --card-border: #0057A6;
+        --button-bg: #FFD500;
+        --button-text: #000000;
+        --button-border: #0057A6;
+        --button-bg-hover: #ffeb7b;
+        --section-bg: #ffffff;
+        --section-shadow: rgba(0,0,0,0.15);
+        --table-header-bg: #0057A6;
+        --table-header-text: #ffffff;
+        --table-border: #cccccc;
+        --table-cell-bg: #ffffff;
+        --progress-bg: #dddddd;
+        --progress-fill: #2ecc71;
+        --progress-text: #333333;
+        --footer-bg: #0057A6;
+        --footer-text: #ffffff;
+        --stud-color: rgba(0,0,0,0.25);
+    }
+
+    body[data-theme="dark"] {
+        --bg: #121212;
+        --bg-pattern: radial-gradient(circle at 8px 8px, rgba(255,255,255,0.08) 3px, transparent 4px);
+        --text: #f5f5f5;
+        --header-bg: #002f5c;
+        --header-text: #ffffff;
+        --header-border: #FFC800;
+        --card-bg: #1e1e1e;
+        --card-border: #FFC800;
+        --button-bg: #FFC800;
+        --button-text: #000000;
+        --button-border: #FFC800;
+        --button-bg-hover: #ffe873;
+        --section-bg: #1e1e1e;
+        --section-shadow: rgba(0,0,0,0.7);
+        --table-header-bg: #003f78;
+        --table-header-text: #ffffff;
+        --table-border: #444444;
+        --table-cell-bg: #252525;
+        --progress-bg: #333333;
+        --progress-fill: #27ae60;
+        --progress-text: #f5f5f5;
+        --footer-bg: #002f5c;
+        --footer-text: #ffffff;
+        --stud-color: rgba(0,0,0,0.5);
+    }
+
+    /* --------- GLOBAL --------- */
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        color: var(--text);
+        background-color: var(--bg);
+        background-image: var(--bg-pattern);
+        background-size: 32px 32px; /* LEGO-Noppen-Effekt */
+    }
+
+    /* --------- HEADER MIT LEGO-BRICK-OPTIK --------- */
+    header {
+        background: var(--header-bg);
+        color: var(--header-text);
+        padding: 15px 0 10px 0;
+        border-bottom: 10px solid var(--header-border);
+        position: relative;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    }
+
+    .header-inner {
+        width: 90%;
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .header-title {
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .subheader {
+        width: 90%;
+        max-width: 1100px;
+        margin: 0 auto 10px auto;
+        font-size: 14px;
+        color: rgba(255,255,255,0.85);
+    }
+
+    /* LEGO-Noppen-Leiste am Header (Brick-Studs) */
+    header::after {
+        content: "";
+        display: block;
+        height: 18px;
+        background-color: var(--header-border);
+        background-image: radial-gradient(circle at 8px 9px, var(--stud-color) 0, var(--stud-color) 4px, transparent 5px);
+        background-size: 32px 18px;
+        background-repeat: repeat-x;
+    }
+
+    /* --------- FOOTER MIT LEGO-BRICK-OPTIK --------- */
+    footer {
+        margin-top: 30px;
+        background: var(--footer-bg);
+        color: var(--footer-text);
+        text-align: center;
+        font-size: 12px;
+        padding-top: 20px;
+        position: relative;
+    }
+
+    footer::before {
+        content: "";
+        display: block;
+        height: 18px;
+        background-color: var(--header-border);
+        background-image: radial-gradient(circle at 8px 9px, var(--stud-color) 0, var(--stud-color) 4px, transparent 5px);
+        background-size: 32px 18px;
+        background-repeat: repeat-x;
+        margin-bottom: 8px;
+    }
+
+    footer p {
+        margin: 0 0 12px 0;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px 0 30px 0;
+    }
+
+    h2 {
+        color: var(--header-bg);
+        margin-top: 20px;
+        font-size: 24px;
+        border-left: 10px solid var(--header-border);
+        padding-left: 10px;
+    }
+
+    /* --------- DARK/LIGHT MODE BUTTON --------- */
+    .theme-toggle {
+        background: transparent;
+        border: 2px solid var(--header-border);
+        color: var(--header-text);
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .theme-toggle:hover {
+        background: rgba(0,0,0,0.15);
+    }
+
+    /* --------- BUTTON-GRID --------- */
+    .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+        padding: 20px 0;
+    }
+
+    .task-button {
+        background: var(--button-bg);
+        color: var(--button-text);
+        border: 3px solid var(--button-border);
+        padding: 15px;
+        font-size: 18px;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+        transition: 0.2s ease;
+        box-shadow: 0 3px 0 rgba(0,0,0,0.25);
+    }
+
+    .task-button:hover {
+        background: var(--button-bg-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+    }
+
+    .icon {
+        font-size: 24px;
+    }
+
+    /* --------- CONTENT SECTIONS --------- */
+    .content-section {
+        display: none;
+        background: var(--section-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--section-shadow);
+        border-left: 10px solid var(--header-bg);
+        margin-top: 10px;
+    }
+
+    .back-btn {
+        background: var(--header-bg);
+        color: var(--header-text);
+        padding: 7px 14px;
+        font-size: 13px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: none;
+        margin-bottom: 15px;
+    }
+
+    .back-btn:hover {
+        opacity: 0.9;
+    }
+
+    /* --------- TABLES --------- */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        margin-bottom: 20px;
+        border: 1px solid var(--table-border);
+    }
+
+    th {
+        background: var(--table-header-bg);
+        color: var(--table-header-text);
+        padding: 8px;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    td {
+        background: var(--table-cell-bg);
+        padding: 8px;
+        border: 1px solid var(--table-border);
+        font-size: 14px;
+    }
+
+    ul {
+        margin-top: 5px;
+    }
+
+    /* --------- FORTSCHRITTSANZEIGE --------- */
+    .progress-wrapper {
+        margin: 10px 0 20px 0;
+        padding: 10px;
+        border-radius: 8px;
+        background: rgba(0,0,0,0.03);
+    }
+
+    .progress-text {
+        font-size: 13px;
+        color: var(--progress-text);
+        margin-bottom: 6px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 10px;
+        background: var(--progress-bg);
+        border-radius: 5px;
+        overflow: hidden;
+        margin-bottom: 6px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: var(--progress-fill);
+        transition: width 0.25s ease;
+    }
+
+    .progress-buttons {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .progress-buttons button {
+        border-radius: 12px;
+        padding: 4px 10px;
+        font-size: 11px;
+        border: 1px solid var(--button-border);
+        background: var(--card-bg);
+        color: var(--text);
+        cursor: pointer;
+    }
+
+    .progress-buttons button:hover {
+        background: var(--button-bg-hover);
+    }
+
+</style>
+
+<script>
+    // Theme-Umschalter
+    function toggleTheme() {
+        const body = document.body;
+        const current = body.getAttribute("data-theme") || "light";
+        const next = current === "light" ? "dark" : "light";
+        body.setAttribute("data-theme", next);
+
+        const label = document.getElementById("themeLabel");
+        if (next === "light") {
+            label.textContent = "🌙 Dark Mode";
+        } else {
+            label.textContent = "☀️ Light Mode";
+        }
+    }
+
+    // Sections umschalten
+    function showSection(id) {
+        const sections = document.querySelectorAll(".content-section");
+        sections.forEach(sec => sec.style.display = "none");
+        document.getElementById("overview").style.display = "none";
+        const target = document.getElementById(id);
+        if (target) target.style.display = "block";
+    }
+
+    function backToOverview() {
+        const sections = document.querySelectorAll(".content-section");
+        sections.forEach(sec => sec.style.display = "none");
+        document.getElementById("overview").style.display = "block";
+    }
+
+    // Fortschritt je Auftrag setzen
+    function setProgress(taskKey, level) {
+        const wrapper = document.getElementById("progress-" + taskKey);
+        if (!wrapper) return;
+        const fill = wrapper.querySelector(".progress-fill");
+        const textSpan = wrapper.querySelector(".progress-text span");
+        let pct = 0;
+        let label = "Noch nicht gestartet";
+
+        if (level === 1) {
+            pct = 50;
+            label = "In Arbeit";
+        } else if (level === 2) {
+            pct = 100;
+            label = "Abgeschlossen";
+        }
+
+        fill.style.width = pct + "%";
+        textSpan.textContent = label;
+    }
+</script>
+</head>
+
+<body data-theme="light">
+
+<header>
+    <div class="header-inner">
+        <div class="header-title">📘 LEGO SPIKE PRIME – Erfinderlabor</div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span id="themeLabel">🌙 Dark Mode</span>
+        </button>
+    </div>
+    <p class="subheader">Schulhaus Nikolai – Medien &amp; Informatik</p>
+</header>
+
+<div class="container">
+
+    <!-- STARTSEITE -->
+    <div id="overview">
+        <h2>Wähle dein Kapitel oder deinen Auftrag</h2>
+
+        <div class="button-grid">
+            <button class="task-button" onclick="showSection('regeln')">
+                <span class="icon">📏</span> Regeln &amp; Material
+            </button>
+
+            <button class="task-button" onclick="showSection('uebersicht')">
+                <span class="icon">📋</span> Auftragsübersicht
+            </button>
+
+            <button class="task-button" onclick="showSection('task1')">
+                <span class="icon">🔥</span> Auftrag 1 – Warm up
+            </button>
+
+            <button class="task-button" onclick="showSection('task2')">
+                <span class="icon">🧲</span> Auftrag 2 – Rettungsmission
+            </button>
+
+            <button class="task-button" onclick="showSection('task3')">
+                <span class="icon">🏠</span> Auftrag 3 – Smart Home
+            </button>
+
+            <button class="task-button" onclick="showSection('task4')">
+                <span class="icon">🔗</span> Auftrag 4 – Kettenreaktion
+            </button>
+
+            <button class="task-button" onclick="showSection('task5')">
+                <span class="icon">🎨</span> Auftrag 5 – Künstler‑Roboter
+            </button>
+
+            <button class="task-button" onclick="showSection('task6')">
+                <span class="icon">🏆</span> Auftrag 6 – Robot Games
+            </button>
+
+            <button class="task-button" onclick="showSection('lerntagebuch')">
+                <span class="icon">📓</span> Lerntagebuch
+            </button>
+
+            <button class="task-button" onclick="showSection('organisation')">
+                <span class="icon">🧩</span> Organisation
+            </button>
+        </div>
+    </div>
+
+    <!-- REGELN & MATERIAL -->
+    <div id="regeln" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>📏 Regeln &amp; Material</h2>
+
+        <h3>Regeln</h3>
+        <ul>
+            <li>Vermische kein Material aus anderen LEGO‑Kisten.</li>
+            <li>Arbeite sorgfältig, kontrolliere Kabelverbindungen.</li>
+            <li>Dokumentiere deine Fortschritte mit Fotos.</li>
+            <li>Baue erst stabil – dann kreativ.</li>
+        </ul>
+
+        <h3>Material</h3>
+        <ul>
+            <li>LEGO SPIKE Prime Box</li>
+            <li>Laptop mit SPIKE‑APP</li>
+            <li>USB‑Kabel oder Bluetooth</li>
+            <li>Diverse LEGO‑Elemente</li>
+        </ul>
+    </div>
+
+    <!-- AUFTRAGSÜBERSICHT -->
+    <div id="uebersicht" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>📋 Auftragsübersicht</h2>
+
+        <table>
+            <tr>
+                <th>Auftrag</th>
+                <th>Schwierigkeit</th>
+                <th>Gestartet</th>
+                <th>Erledigt</th>
+                <th>Kontrolliert</th>
+                <th>Dokumentiert</th>
+            </tr>
+            <tr>
+                <td>1. Warm up &amp; Teststrecke</td>
+                <td>★</td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>2. Rettungsmission – Rettungsroboter</td>
+                <td>★★</td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>3. Smart Home mit SPIKE</td>
+                <td>★★</td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>4. Kettenreaktion – Tüftelmodul</td>
+                <td>★★</td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>5. Künstler‑Roboter</td>
+                <td>★★–★★★</td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>6. Robot Games – Eigene Challenge</td>
+                <td>★★–★★★</td><td></td><td></td><td></td><td></td>
+            </tr>
+        </table>
+
+        <p><b>★ = einfach, ★★ = mittel, ★★★ = anspruchsvoll</b></p>
+    </div>
+
+    <!-- AUFTRAG 1 -->
+    <div id="task1" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>🔥 Auftrag 1 – Warm up &amp; Teststrecke</h2>
+
+        <div class="progress-wrapper" id="progress-task1">
+            <div class="progress-text">Fortschritt: <span>Noch nicht gestartet</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-buttons">
+                <button type="button" onclick="setProgress('task1',0)">○ Noch nicht gestartet</button>
+                <button type="button" onclick="setProgress('task1',1)">◐ In Arbeit</button>
+                <button type="button" onclick="setProgress('task1',2)">● Abgeschlossen</button>
+            </div>
+        </div>
+
+        <h3>Ziele</h3>
+        <ul>
+            <li>Grundfunktionen von Motoren und Bewegung wiederholen</li>
+            <li>Erstes Programm erstellen</li>
+            <li>Fahrgestell stabil bauen</li>
+        </ul>
+
+        <h3>Input/Output wiederholen</h3>
+        <table>
+            <tr><th>Begriff</th><th>Bedeutung</th></tr>
+            <tr><td>Input</td><td></td></tr>
+            <tr><td>Output</td><td></td></tr>
+        </table>
+
+        <h3>Fahrgestell bauen</h3>
+        <ul>
+            <li>Zwei Antriebsräder mit zwei Motoren</li>
+            <li>Stützrad oder Gleiter hinten</li>
+        </ul>
+
+        <h3>Programm 1</h3>
+        Roboter fährt geradeaus → stoppt nach Zeit.
+
+        <h3>Programm 2: Viereck</h3>
+        <p>Schreibe zuerst Pseudocode:</p>
+        <table>
+            <tr><th>Schritt</th><th>Beschreibung</th></tr>
+            <tr><td>1</td><td></td></tr>
+            <tr><td>2</td><td></td></tr>
+            <tr><td>3</td><td></td></tr>
+        </table>
+
+        <h3>Tüftel-Ideen</h3>
+        <ul>
+            <li>Schleife einbauen</li>
+            <li>Ton oder Bild anzeigen</li>
+        </ul>
+    </div>
+
+    <!-- AUFTRAG 2 -->
+    <div id="task2" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>🧲 Auftrag 2 – Rettungsmission</h2>
+
+        <div class="progress-wrapper" id="progress-task2">
+            <div class="progress-text">Fortschritt: <span>Noch nicht gestartet</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-buttons">
+                <button type="button" onclick="setProgress('task2',0)">○ Noch nicht gestartet</button>
+                <button type="button" onclick="setProgress('task2',1)">◐ In Arbeit</button>
+                <button type="button" onclick="setProgress('task2',2)">● Abgeschlossen</button>
+            </div>
+        </div>
+
+        <h3>Ziel</h3>
+        <p>Ein Roboter soll Objekte aus einer Gefahrenzone in die Sicherheitszone bringen.</p>
+
+        <h3>Mindestbau</h3>
+        <ul>
+            <li>2 Motoren für Räder</li>
+            <li>1 Motor für Arm</li>
+            <li>1 Sensor (Distanz oder Kraft)</li>
+        </ul>
+
+        <h3>Programm – Mindestanforderung</h3>
+        <ul>
+            <li>zur Gefahrenzone fahren</li>
+            <li>stoppen</li>
+            <li>Arm senken</li>
+            <li>Objekt transportieren</li>
+        </ul>
+
+        <h3>Tüfteln</h3>
+        <ul>
+            <li>Stopp durch Sensor statt Zeit</li>
+            <li>LED‑Signale (grün/rot)</li>
+            <li>mehrere Transportfahrten (Schleife)</li>
+        </ul>
+    </div>
+
+    <!-- AUFTRAG 3 -->
+    <div id="task3" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>🏠 Auftrag 3 – Smart Home mit SPIKE</h2>
+
+        <div class="progress-wrapper" id="progress-task3">
+            <div class="progress-text">Fortschritt: <span>Noch nicht gestartet</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-buttons">
+                <button type="button" onclick="setProgress('task3',0)">○ Noch nicht gestartet</button>
+                <button type="button" onclick="setProgress('task3',1)">◐ In Arbeit</button>
+                <button type="button" onclick="setProgress('task3',2)">● Abgeschlossen</button>
+            </div>
+        </div>
+
+        <h3>Ideen</h3>
+        <p>Wähle eine der folgenden oder erfinde selbst:</p>
+        <ul>
+            <li>automatische Tür</li>
+            <li>Alarmanlage</li>
+            <li>Mini‑Lift</li>
+            <li>Lichtsteuerung</li>
+        </ul>
+
+        <h3>Planung</h3>
+        <table>
+            <tr><th>Element</th><th>Meine Idee</th></tr>
+            <tr><td>Name meines Systems</td><td></td></tr>
+            <tr><td>Was es tun soll</td><td></td></tr>
+            <tr><td>Benötigte Sensoren</td><td></td></tr>
+        </table>
+
+        <h3>Programm</h3>
+        <p>Mindestens 1 Wenn‑Dann‑Regel:</p>
+        <p><b>Wenn Sensor ausgelöst → Motor bewegt sich</b></p>
+
+        <h3>Tüfteln</h3>
+        <ul>
+            <li>2 Sensoren kombinieren</li>
+            <li>Verzögerungen einbauen</li>
+            <li>Tag-/Nacht‑Modus</li>
+        </ul>
+    </div>
+
+    <!-- AUFTRAG 4 -->
+    <div id="task4" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>🔗 Auftrag 4 – Kettenreaktion</h2>
+
+        <div class="progress-wrapper" id="progress-task4">
+            <div class="progress-text">Fortschritt: <span>Noch nicht gestartet</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-buttons">
+                <button type="button" onclick="setProgress('task4',0)">○ Noch nicht gestartet</button>
+                <button type="button" onclick="setProgress('task4',1)">◐ In Arbeit</button>
+                <button type="button" onclick="setProgress('task4',2)">● Abgeschlossen</button>
+            </div>
+        </div>
+
+        <h3>Ziel</h3>
+        <p>Ein Modul bauen, das von etwas ausgelöst wird und ein weiteres Element auslöst.</p>
+
+        <h3>Planung</h3>
+        <table>
+            <tr><th>Eingang</th><th>Ausgang</th></tr>
+            <tr>
+                <td>Was löst meinen Roboter aus?</td>
+                <td>Was löst mein Roboter aus?</td>
+            </tr>
+        </table>
+
+        <h3>Programm</h3>
+        <ul>
+            <li>Sensor erkennt Auslöser</li>
+            <li>Motor bewegt sich</li>
+            <li>Aktion löst nächstes Element aus</li>
+        </ul>
+
+        <h3>Tüfteln</h3>
+        <ul>
+            <li>2 Bewegungen einbauen</li>
+            <li>Verzögerung</li>
+            <li>Thema geben (Vulkan, Space, Unterwasser)</li>
+        </ul>
+    </div>
+
+    <!-- AUFTRAG 5 -->
+    <div id="task5" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>🎨 Auftrag 5 – Künstler‑Roboter</h2>
+
+        <div class="progress-wrapper" id="progress-task5">
+            <div class="progress-text">Fortschritt: <span>Noch nicht gestartet</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-buttons">
+                <button type="button" onclick="setProgress('task5',0)">○ Noch nicht gestartet</button>
+                <button type="button" onclick="setProgress('task5',1)">◐ In Arbeit</button>
+                <button type="button" onclick="setProgress('task5',2)">● Abgeschlossen</button>
+            </div>
+        </div>
+
+        <h3>Ziel</h3>
+        <p>Ein Roboter zeichnet geometrische Formen oder Muster.</p>
+
+        <h3>Mindestanforderung</h3>
+        <ul>
+            <li>Stift befestigen</li>
+            <li>Form wählen</li>
+            <li>Programm mit mindestens 1 Schleife</li>
+        </ul>
+
+        <h3>Tüfteln</h3>
+        <ul>
+            <li>Muster</li>
+            <li>mehrere Formen kombinieren</li>
+            <li>Zufall verwenden</li>
+            <li>eigenen Namen zeichnen</li>
+        </ul>
+    </div>
+
+    <!-- AUFTRAG 6 -->
+    <div id="task6" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>🏆 Auftrag 6 – Robot Games – Eigene Challenge</h2>
+
+        <div class="progress-wrapper" id="progress-task6">
+            <div class="progress-text">Fortschritt: <span>Noch nicht gestartet</span></div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="progress-buttons">
+                <button type="button" onclick="setProgress('task6',0)">○ Noch nicht gestartet</button>
+                <button type="button" onclick="setProgress('task6',1)">◐ In Arbeit</button>
+                <button type="button" onclick="setProgress('task6',2)">● Abgeschlossen</button>
+            </div>
+        </div>
+
+        <h3>1. Challenge erfinden</h3>
+        <table>
+            <tr><th>Punkt</th><th>Beschreibung</th></tr>
+            <tr><td>Name der Challenge</td><td></td></tr>
+            <tr><td>Ziel</td><td></td></tr>
+            <tr><td>Regeln</td><td></td></tr>
+        </table>
+
+        <h3>2. Challenge testen</h3>
+        <ul>
+            <li>Ist sie lösbar?</li>
+            <li>Bewältigbar für andere Teams?</li>
+            <li>Fair?</li>
+        </ul>
+    </div>
+
+    <!-- LERNTAGEBUCH -->
+    <div id="lerntagebuch" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>📓 Lerntagebuch</h2>
+
+        <table>
+            <tr><th>Frage</th><th>Deine Antwort</th></tr>
+            <tr><td>Das habe ich gemacht</td><td></td></tr>
+            <tr><td>Das habe ich gelernt</td><td></td></tr>
+            <tr><td>Das ist mir gelungen</td><td></td></tr>
+            <tr><td>Das war schwierig</td><td></td></tr>
+            <tr><td>So habe ich Probleme gelöst</td><td></td></tr>
+            <tr><td>Ich bin zufrieden, weil…</td><td></td></tr>
+        </table>
+    </div>
+
+    <!-- ORGANISATION -->
+    <div id="organisation" class="content-section">
+        <button class="back-btn" onclick="backToOverview()">← Zurück</button>
+        <h2>🧩 Organisation</h2>
+
+        <table>
+            <tr><th>Kiste / Hub</th><th>Gruppe / Namen</th></tr>
+            <tr><td></td><td></td></tr>
+            <tr><td></td><td></td></tr>
+        </table>
+    </div>
+
+</div>
+
+<footer>
+    <p>LEGO SPIKE Erfinderlabor – Schulhaus Nikolai – 6. Klasse</p>
+</footer>
+
+</body>
+</html>
+``
